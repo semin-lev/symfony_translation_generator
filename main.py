@@ -2,16 +2,8 @@ from lib import TranslateCollections, find_files, TranslatePhrase, TranslationTe
 from yaml_config import YamlRepresentation
 
 yaml = YamlRepresentation("test.yml")
-b = yaml.get_value("admin.baners.menu_title")
-yaml.set_value("admin.baners.new_value", "test")
-yaml.set_value("admin.baners.menu_title", "test2")
-yaml.set_value("admin.new_child.new_value", "test3")
-print(yaml.find_key_by_value("Результаты продвижения"))
-yaml.flush()
-exit()
-
 translates = TranslateCollections()
-files = find_files("/Users/levsemin/projects/web/new_beontop/DarvinCMS/src/",
+files = find_files("/Users/levsemin/projects/web/new_beontop/DarvinCMS/app/Resources",
                    "messages.*.yml|validators.*.yml")
 for file in files:
     for text in file.get_all_cyrillic():
@@ -21,27 +13,33 @@ templates = [
     TranslationTemplate("<?=$view['translator']->trans('%s')?>"),
     TranslationTemplate("$view['translator']->trans('%s')"),
     TranslationTemplate("$this->container->get('translator')->trans('%s')"),
+    TranslationTemplate("%s"),
 ]
 
 for trans in translates.translations_list:
-    if type(trans.replace_to_key) is not None:
+    if trans.replace_to_key is not None:
         continue
     print(trans)
-    key = input("Заменить на ключ: ")
-    if len(key) == 0:
+    exist_key = yaml.find_key_by_value(trans.phrase)
+    key = input("Заменить на ключ (%s): " % exist_key)
+    if len(key) == 0 and exist_key is None:
         continue
-    temp_key = input("Шаблон (0 - view, 1 view without php tags, 2 - code, blank - nothing): ")
-    template = templates[int(temp_key)] if temp_key == '0' or temp_key == '1' else None
+    if len(key) is None:
+        key = exist_key
+    temp_key = input("Шаблон (0 or nothing - view, 1 view without php tags, 2 - code, 3 - nothing): ")
+    template = templates[int(temp_key)] if len(temp_key) > 0 else '0'
     trans.set_replace_to(key, template)
+    yaml.set_value(key, trans.phrase)
     if key:
         print("Похожие")
         for same in translates.find_same(trans):
-            flag = input(trans)
+            flag = input(same)
             if len(flag) == 0:
                 same.set_replace_to(key, template)
 
     print("__________________")
+    print("")
 
 translates.flush()
-# for file in files:
-#    file.flush()
+for file in files:
+    file.flush()
