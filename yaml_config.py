@@ -66,3 +66,23 @@ class YamlRepresentation:
         (parsed_keys, last_key) = self._parse_key(key)
         item = self._get_child_dict(parsed_keys, False)
         return item[last_key] if type(item) is dict else None
+
+    def find_key_by_value(self, value):
+        def recursive_search(dictionary, search_item, parents=None):
+            """
+            :type dictionary: dict
+            :param parents: list|None
+            :return:
+            """
+            for key, val in dictionary.items():
+                local_parents = parents.copy() if parents is not None else []
+                local_parents.append(key)
+                if type(val) is dict:
+                    result = recursive_search(val, search_item, local_parents)
+                    if result is not None:
+                        return result
+                else:
+                    if val == search_item:
+                        return '.'.join(local_parents)
+            return None
+        return recursive_search(self.dict, value)

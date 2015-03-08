@@ -6,6 +6,7 @@ b = yaml.get_value("admin.baners.menu_title")
 yaml.set_value("admin.baners.new_value", "test")
 yaml.set_value("admin.baners.menu_title", "test2")
 yaml.set_value("admin.new_child.new_value", "test3")
+print(yaml.find_key_by_value("Результаты продвижения"))
 yaml.flush()
 exit()
 
