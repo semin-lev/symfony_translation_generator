@@ -1,4 +1,13 @@
 from lib import TranslateCollections, find_files, TranslatePhrase, TranslationTemplate, File
+from yaml_config import YamlRepresentation
+
+yaml = YamlRepresentation("test.yml")
+b = yaml.get_value("admin.baners.menu_title")
+yaml.set_value("admin.baners.new_value", "test")
+yaml.set_value("admin.baners.menu_title", "test2")
+yaml.set_value("admin.new_child.new_value", "test3")
+yaml.flush()
+exit()
 
 translates = TranslateCollections()
 files = find_files("/Users/levsemin/projects/web/new_beontop/DarvinCMS/src/",
@@ -14,7 +23,7 @@ templates = [
 ]
 
 for trans in translates.translations_list:
-    if trans.replace_to_key is not None:
+    if type(trans.replace_to_key) is not None:
         continue
     print(trans)
     key = input("Заменить на ключ: ")
