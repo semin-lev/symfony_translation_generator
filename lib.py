@@ -70,16 +70,20 @@ class TranslatePhrase:
         """
         return self.__replace_to_template
 
-    def set_replace_to(self, key, template=None):
+    def set_replace_to(self, key, template=None, flush=False, flush_file=False):
         self.__replace_to_key = key
         self.__replace_to_template = template
+        if flush:
+            self.flush(flush_file)
 
-    def flush(self):
+    def flush(self, flush_file=False):
         if not self.replace_to_key:
             return
         self.file.replace(self.phrase,
                           self.replace_to_template.template % self.replace_to_key if self.replace_to_template else
                           self.replace_to_key)
+        if flush_file:
+            self.file.flush()
 
     def __str__(self, *args, **kwargs):
         return "%s - %s" % (self.phrase, self.file.filename)

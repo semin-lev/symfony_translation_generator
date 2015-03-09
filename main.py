@@ -28,18 +28,19 @@ for trans in translates.translations_list:
         key = exist_key
     temp_key = input("Шаблон (0 or nothing - view, 1 view without php tags, 2 - code, 3 - nothing): ")
     template = templates[int(temp_key)] if len(temp_key) > 0 else '0'
-    trans.set_replace_to(key, template)
+    trans.set_replace_to(key, template, True, True)
     yaml.set_value(key, trans.phrase)
+    yaml.flush()
     if key:
         print("Похожие")
         for same in translates.find_same(trans):
             flag = input(same)
             if len(flag) == 0:
-                same.set_replace_to(key, template)
+                same.set_replace_to(key, template, True, True)
 
     print("__________________")
     print("")
 
-translates.flush()
-for file in files:
-    file.flush()
+# translates.flush()
+# for file in files:
+#    file.flush()
